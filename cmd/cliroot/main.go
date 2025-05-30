@@ -9,11 +9,6 @@ import (
 	"cli-crud/internal/data/session"
 )
 
-// type Session struct {
-// 	AuthToken string
-// 	UserEmail stringyyyy
-// }
-
 func main() {
 	session := &session.Session{}
 	RunCli(session)
@@ -37,12 +32,6 @@ func RunCli(session *session.Session) {
 		args := strings.Fields(line)
 		cmd := strings.ToUpper(args[0])
 		params := args[1:]
-
-		// Handle multi-word command like `delete-list all`
-		// if cmd == "delete-list" && len(params) > 0 && params[0] == "all" {
-		// 	cmd = "delete-list all"
-		// 	params = params[1:]
-		// }
 
 		conf, exists := Config[cmd]
 		if !exists {

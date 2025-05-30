@@ -1,12 +1,30 @@
 package io
 
 import (
-	"encoding/json"
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 )
+
+func ReadJSONFile[T any](filePath string) (*T, error) {
+	file, err  :=  os.Open(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("cannot open file %s: %w", filePath, err)
+	}
+	defer file.Close()
+
+	decoder := json.NewDecoder(file)
+	var data T
+	if err := decoder.Decode(&data); err != nil {
+		return nil, fmt.Errorf("invalid JSON in file %s: %w", filePath, err)
+		
+	}
+
+	return &data, nil
+}
 
 func BuildRequest(method, url string, headers map[string]string, bodyData any) (*http.Request, error) {
 	var body io.Reader
@@ -53,8 +71,8 @@ func SendRequest(request *http.Request) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to read response: %w", err)
 	}
-
 	return body, nil
+	
 }
 
 func DecodeJSON[T any] (data []byte) (*T, error) {

@@ -4,16 +4,8 @@ import (
 	"fmt"
 	"cli-crud/pkg/io"
 	"cli-crud/internal/data/session"
+	"cli-crud/types"
 )
-
-type LoginRequest struct  {
-	Email string `json:"email"`
-	Password string `json:"password"`
-}
-
-type LoginResponse struct {
-	Token string `json:"token"`
-}
 
 // serve as a controller for the auth-admin command
 func AuthAdmin(args []string, sess *session.Session) {
@@ -22,12 +14,12 @@ func AuthAdmin(args []string, sess *session.Session) {
 		return
 	}
 
-	payload := LoginRequest{
+	payload := types.LoginRequest{
 		Email: args[0],
 		Password: args[1],
 	}
 
-	response, err := io.DoJSONRequest[LoginResponse](
+	response, err := io.DoJSONRequest[types.LoginResponse](
 		"POST",
 		"http://localhost:3000/login",
 		nil,
