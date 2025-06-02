@@ -5,13 +5,18 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sort"
 
 	"cli-crud/internal/data/session"
 )
 
 func main() {
-	session := &session.Session{}
-	RunCli(session)
+	sess := initSession()
+	RunCli(sess)
+}
+
+func initSession() *session.Session {
+	return &session.Session{}
 }
 
 func RunCli(session *session.Session) {
@@ -36,43 +41,55 @@ func RunCli(session *session.Session) {
 		conf, exists := Config[cmd]
 		if !exists {
 			fmt.Println("Unknown command:", cmd)
-			// fmt.Println("Type `help` for commands.")
 			printHelp()
 			continue
 		}
 
-		if len(params) < conf.minParams {
-			fmt.Printf("Usage: %s %s\n", cmd, conf.params)
+		if err := validateCommandParams(conf, params); err != nil {
+			fmt.Println(err)
 			continue
 		}
 
 		if conf.handler != nil {
 			conf.handler(params, session)
 		} else {
-			switch cmd {
-			case CmdHelp:
-				printHelp()
-			case CmdExit:
-				fmt.Println("Goodbye!")
-				return
-			}
+			handleNoHandler(cmd)
 		}
+	}
+}
+
+func handleNoHandler(cmd string) {
+	switch cmd {
+	case CmdHelp:
+		printHelp()
+	case CmdExit:
+		fmt.Println("Goodbye!")
+		os.Exit(0)
 	}
 }
 
 func printHelp() {
 	fmt.Println("Available commands:")
 
-	maxLen := 0
+	commands := []string{}
 	for name := range Config {
+		commands = append(commands, name)
+	}
+
+	sort.Strings(commands)
+
+	maxLen := 0
+	for _, name := range commands {
 		if len(name) > maxLen {
 			maxLen = len(name)
 		}
 	}
 
-	for name, conf := range Config {
+	for _, name := range commands {
+		conf := Config[name]
 		padding := strings.Repeat(" ", maxLen-len(name)+10)
 		fmt.Printf("  %s%s%s\n", name, padding, conf.params)
 	}
 	
 }
+

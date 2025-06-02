@@ -23,7 +23,7 @@ var Config = map[string]CmdConfig{
 	"AUTH-ADMIN"          :    {2, Auth, handler.AuthAdmin},
 	"SHOW-USERS"          :    {0, DisplayAllUsersMessage, handler.GetUsersList},
 	"SHOW-SERVICES"       :    {0, DisplayAllServicesMessage, handler.GetServiceList},
-	"CREATE-SERVICE"      :    {2, ServiceFields, handler.PostService},
+	"CREATE-SERVICE"      :    {2, ShowCreateServiceMessage, handler.PostService},
 	"DELETE-ALL-SERVICES" :    {0, ShowDeleteAllServicesMessage, handler.DeleteAllServices},
 	"DELETE-SERVICE-ID"   :    {1, ShowDeleteServiceIDMessage, handler.DeleteById},
 	"UPDATE-SERVICE"      :    {2, ShowUpdateServiceMessage, handler.UpdateService},
